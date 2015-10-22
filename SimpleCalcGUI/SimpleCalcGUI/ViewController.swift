@@ -23,7 +23,7 @@ class ViewController: UIViewController {
     var running : Double = -1
     var op : String = ""
     var operand : Double = -1
-    var count : Int = 0
+    var count : Double = 1
     
     @IBAction func AppendNumberToField(sender: UIButton) {
         if let text = sender.titleLabel?.text
@@ -31,10 +31,10 @@ class ViewController: UIViewController {
             TxtFieldResult.text! += text
             
             if (op == "") {
-                running = (text as NSString).doubleValue
+                running = (TxtFieldResult.text! as NSString).doubleValue
             }
             else {
-                operand = (text as NSString).doubleValue
+                operand = (TxtFieldResult.text! as NSString).doubleValue
             }
         }
     }
@@ -44,18 +44,22 @@ class ViewController: UIViewController {
         {
             RunEquals(sender);
         }
-        else
-        {
-            TxtFieldResult.text! = ""
-        }
+
+        TxtFieldResult.text! = ""
         
         if let text = sender.titleLabel?.text
         {
             op = text
+            
+            if (op == "fact") {
+                RunEquals(sender)
+            }
         }
     }
     
     @IBAction func RunEquals(sender: UIButton) {
+        count++
+        
         switch op {
             case "+":
                 running += operand
@@ -65,19 +69,28 @@ class ViewController: UIViewController {
                 running *= operand
             case "/":
                 running /= operand
+            case "%":
+                running %= operand
             case "avg":
-                running += operand
-                running /= Double(count)
+                running = (running + operand) / count
             case "count":
                 running = Double(count)
             case "fact":
                 running = factorial(running)
             default:
-                running = 0
+                running = 1 * running
         }
         
         TxtFieldResult.text! = String(format:"%.1f", running)
+        op = ""
         operand = -1
+        
+        if let text = sender.titleLabel?.text
+        {
+            if text == "=" {
+                count = 1
+            }
+        }
     }
     
     @IBAction func ClearField(sender: UIButton) {
@@ -85,6 +98,7 @@ class ViewController: UIViewController {
         running = -1
         op = ""
         operand = -1
+        count = 1
     }
     
     func factorial(incoming: Double) -> Double {
